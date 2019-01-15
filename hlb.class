@@ -1,0 +1,34 @@
+<?php
+use Bitrix\Highloadblock\HighloadBlockTable as HLBT;
+
+class Hlb 
+{
+	private $hlb_inst;
+
+	public function __construct(string $hlbName)
+	{
+		CModule::IncludeModule('highloadblock');		
+		$rsData = HLBT::getList(array('filter'=>array('TABLE_NAME'=>$hlbName)));
+		
+		if ( !($hldata = $rsData->fetch()) ){
+			return false;
+		}
+
+		$entity = HLBT::compileEntity($hldata);
+		$entity_data_class = $entity->getDataClass();
+		$hlb_inst = $entity_data_class;
+	}
+
+	public function Select($field, $value, $eq = "")
+	{
+		return $hlb_inst::getList(Array(
+			'select' => array('*'),
+			'filter' => array($eq.$field => $value)
+			));
+
+	}
+	
+}
+
+
+?>
